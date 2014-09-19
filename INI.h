@@ -1,5 +1,5 @@
 /*
-   Feather INI Parser - 1.38
+   Feather INI Parser - 1.39
    You are free to use this however you wish.
 
    If you find a bug, please attept to debug the cause.
@@ -76,53 +76,16 @@ class Converters
 {
 public:
    template <typename T, typename U>
-     static T Convert(U value)
-   {
-     fini_sstream_t sout;
-     T result;
-
-     sout << value;
-     sout >> result;
-
-     sout.str(fini_string_t());
-
-     return result;
-   }
-
-   static void GetLine(fini_sstream_t& out, fini_string_t& value)
-   {
-     std::getline(out, value);
-   }
+     static T Convert(U value);
 
    template<typename T>
-     static void GetLine(fini_sstream_t& out, T& value)
-   {
-     out >> value;
-   }
-
-   static size_t GetDataSize(fini_string_t value)
-   {
-      return value.size() + 1;
-   }
+      static void GetLine(fini_sstream_t& out, T& value);
+   static void GetLine(fini_sstream_t& out, fini_string_t& value);
 
    template<typename T>
-      static size_t GetDataSize(T& value)
-   {
-      return sizeof(value);
-   }
+      static size_t GetDataSize(T& value);
+   static size_t GetDataSize(fini_string_t value);
 };
-
-template <>
-  inline fini_string_t Converters::Convert<fini_string_t, fini_string_t>(fini_string_t value)
-{
-  return value;
-}
-
-template <>
-  inline fini_string_t Converters::Convert<fini_string_t>(const fini_char_t* value)
-{
-  return value;
-}
 
 ///
 template<typename T = fini_string_t, typename U = fini_string_t, typename V = fini_string_t>
@@ -132,6 +95,7 @@ public:
    typedef T section_t;
    typedef U key_t;
    typedef V value_t;
+   typedef INI<section_t, key_t, value_t> ini_t;
 
 ///Type definition declarations
 #ifdef FINI_CPP11
@@ -235,11 +199,11 @@ public:
 ///Get
    value_t get(const key_t key, value_t def = value_t())
    {
-      keysit_t keys = current->find(key);
-      if (current == NULL || keys == current->end())
+      keysit_t it = current->find(key);
+      if (current == NULL || it == current->end())
          return def;
 
-      return keys->second;
+      return it->second;
    }
 
    value_t get(const section_t section, const key_t key, value_t def)
@@ -531,6 +495,30 @@ public:
       return true;
    }
 
+   //Alows another INI's contents to be insert into another, with the ability to retain the original values
+   void merge(ini_t& other, bool retainValues = true)
+   {
+      for(typename INI::sectionsit_t i = other.sections.begin(); i != other.sections.end(); i++)
+      {
+         if (!select(i->first)) //Create and insert all key values into a missing section
+         {
+            keys_t* keys = new keys_t(*i->second);
+            sections.insert(std::make_pair(i->first, keys));
+         }
+         else
+         {
+            for(typename INI::keysit_t j = i->second->begin(); j != i->second->end(); j++)
+            {
+               keysit_t it = current->find(j->first);
+               if (it == current->end())
+                  current->insert(std::make_pair(j->first, j->second));
+               else if (!retainValues)
+                  it->second = j->second;
+            }
+         }
+      }
+   }
+
 private:
 ///Functions
    //Init the INI in with values set by constructor
@@ -599,3 +587,52 @@ private:
       return line.str();
    }
 };
+
+///Definitions
+template <typename T, typename U>
+  inline T Converters::Convert(U value)
+{
+  fini_sstream_t sout;
+  T result;
+
+  sout << value;
+  sout >> result;
+
+  sout.str(fini_string_t());
+
+  return result;
+}
+
+template <>
+  inline fini_string_t Converters::Convert<fini_string_t, fini_string_t>(fini_string_t value)
+{
+  return value;
+}
+
+template <>
+  inline fini_string_t Converters::Convert<fini_string_t>(const fini_char_t* value)
+{
+  return value;
+}
+
+template<typename T>
+  inline void Converters::GetLine(fini_sstream_t& out, T& value)
+{
+  out >> value;
+}
+
+inline void Converters::GetLine(fini_sstream_t& out, fini_string_t& value)
+{
+  std::getline(out, value);
+}
+
+template<typename T>
+   inline size_t Converters::GetDataSize(T& value)
+{
+   return sizeof(value);
+}
+
+inline size_t Converters::GetDataSize(fini_string_t value)
+{
+   return value.size() + 1;
+}

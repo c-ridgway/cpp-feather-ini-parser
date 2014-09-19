@@ -13,12 +13,9 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-std=c++0x" />
 					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
 				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
 			</Target>
 			<Target title="vs_2013">
 				<Option output="bin/vs/example" prefix_auto="1" extension_auto="1" />

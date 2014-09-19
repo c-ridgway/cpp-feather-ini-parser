@@ -41,7 +41,7 @@ int main()
 
    ini.select("Section2");
    ini.set("Key1", "1.123");
-   cout << ini.get<double>("Key1", -1.0) << endl;  //Return value as double
+   cout << ini.get("Key1", -1.0) << endl;  //Return value as double
    ini.set(123, 123);  //Will convert to provided INI data type for key/value, in this case string for both
 
    ini.save();
@@ -101,7 +101,13 @@ int main()
 ///Load from memory
    std::string str = getStringFromFile("config/test.ini"); //Allows us to tap into a source for the purpose of this example
 
-   ini_t ini_mem(str.c_str(), str.size(), true); //This is the line which parses data from memory
+   ini_t ini_mem((void*)str.c_str(), str.size(), true); //This is the line which parses data from memory
+
+///Merge contents and keep values
+   ini_t inid("file.ini", true);
+   ini_t inis("merge.ini", true);
+   inid.merge(inis, true);
+   inid.save("merged.ini");
 
    return EXIT_SUCCESS;
 }
