@@ -12,6 +12,7 @@ Statement     | Return Type
 ini(filename, doParse)|constructor
 ini(data, dataSize, doParse)|constructor
 ini.parse()|bool
+ini.merge(other INI, retainValues)|void
 ini.create(section)|bool
 ini.select(section)|bool
 ini.set(key, value)|bool
