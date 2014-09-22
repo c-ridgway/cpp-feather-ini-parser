@@ -1,5 +1,5 @@
 /*
-   Feather INI Parser - 1.39
+   Feather INI Parser - 1.40
    You are free to use this however you wish.
 
    If you find a bug, please attept to debug the cause.
@@ -244,7 +244,7 @@ public:
          if (first)
          {
             first = false;
-            if (line[0] == 0xEF)
+            if (line[0] == 0xEF) //Allows handling of UTF-16/32 documents
             {
                memmove(line, line + (CHAR_SIZE * 3), CHAR_SIZE * (FINI_BUFFER_SIZE - 3));
                return;
@@ -256,7 +256,7 @@ public:
          if (line[0])
          {
             size_t len = fini_strlen(line);
-            if (len > 0 && !((len >= 2 && line[0] == '/' && line[1] == '/') || (len >= 1 && line[0] == '#')))  //Ignore comment
+            if (len > 0 && !((len >= 2 && line[1] == '\n' || (line[0] == '/' && line[1] == '/')) || (len >= 1 && line[0] == '#')))  //Ignore comment and empty lines
             {
                if (line[0] == '[')  //Section
                {
