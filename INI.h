@@ -77,18 +77,16 @@ class Converters
 public:
    template <typename T, typename U>
      static T Convert(U value);
-
-   template<typename T>
+   template <typename T>
       static void GetLine(fini_sstream_t& out, T& value);
    static void GetLine(fini_sstream_t& out, fini_string_t& value);
-
-   template<typename T>
+   template <typename T>
       static size_t GetDataSize(T& value);
    static size_t GetDataSize(fini_string_t value);
 };
 
 ///
-template<typename T = fini_string_t, typename U = fini_string_t, typename V = fini_string_t>
+template <typename T = fini_string_t, typename U = fini_string_t, typename V = fini_string_t>
    class INI
 {
 public:
@@ -192,7 +190,7 @@ public:
       return true;
    }
 
-   template<class W, class X>
+   template <typename W, typename X>
       bool set(const W key, const X value)
          { return set(Converters::Convert<key_t>(key), Converters::Convert<value_t>(value)); }
 
@@ -214,19 +212,19 @@ public:
       return get(key, def);
    }
 
-   template<typename W, typename X>
+   template <typename W, typename X>
       X get(const W key, const X def = value_t())
          { return Converters::Convert<X>(get(Converters::Convert<key_t>(key), Converters::Convert<value_t>(def))); }
 
-   template<typename W>
+   template <typename W>
       fini_string_t get(const W key, const fini_char_t* def = _T(""))  //Handle C string default value without casting
          { return Converters::Convert<fini_string_t>(get(Converters::Convert<key_t>(key), Converters::Convert<value_t>(def))); }
 
-   template<typename W, typename X, typename Y>
+   template <typename W, typename X, typename Y>
       Y get(const W section, const X key, const Y def)
          { return Converters::Convert<Y>(get(Converters::Convert<section_t>(section), Converters::Convert<key_t>(key), Converters::Convert<value_t>(def))); }
 
-   template<typename W, typename X>
+   template <typename W, typename X>
       fini_string_t get(const W section, const X key, const fini_char_t* def)  //Handle C string default value without casting
          { return Converters::Convert<fini_string_t>(Converters::Convert<section_t>(section), get(Converters::Convert<key_t>(key), Converters::Convert<value_t>(def))); }
 
@@ -615,7 +613,7 @@ template <>
   return value;
 }
 
-template<typename T>
+template <typename T>
   inline void Converters::GetLine(fini_sstream_t& out, T& value)
 {
   out >> value;
@@ -626,7 +624,7 @@ inline void Converters::GetLine(fini_sstream_t& out, fini_string_t& value)
   std::getline(out, value);
 }
 
-template<typename T>
+template <typename T>
    inline size_t Converters::GetDataSize(T& value)
 {
    return sizeof(value);
