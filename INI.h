@@ -1,5 +1,5 @@
 /*
-   Feather INI Parser - 1.39
+   Feather INI Parser - 1.40
    You are free to use this however you wish.
 
    If you find a bug, please attept to debug the cause.
@@ -242,7 +242,7 @@ public:
          if (first)
          {
             first = false;
-            if (line[0] == 0xEF)
+            if (line[0] == 0xEF) //Allows handling of UTF-16/32 documents
             {
                memmove(line, line + (CHAR_SIZE * 3), CHAR_SIZE * (FINI_BUFFER_SIZE - 3));
                return;
@@ -254,7 +254,7 @@ public:
          if (line[0])
          {
             size_t len = fini_strlen(line);
-            if (len > 0 && !((len >= 2 && line[0] == '/' && line[1] == '/') || (len >= 1 && line[0] == '#')))  //Ignore comment
+            if (len > 0 && !((len >= 2 && (line[0] == '/' && line[1] == '/')) || (len >= 1 && line[0] == '#')))  //Ignore comment and empty lines
             {
                if (line[0] == '[')  //Section
                {
@@ -285,25 +285,28 @@ public:
                   skey = fini_strtok(line, _T("="));
                   svalue = fini_strtok(NULL, _T("\n"));
 
-                  size_t index = 0;  //Without section brackets
-                  while(isspace(skey[index]))  //Leave out any additional new line characters, not "spaces" as the name suggests
-                     index++;
+                  if (skey && svalue)
+                  {
+                     size_t index = 0;  //Without section brackets
+                     while(isspace(skey[index]))  //Leave out any additional new line characters, not "spaces" as the name suggests
+                        index++;
 
-                  if (index != 0)  //Has preceeding white space
-                     fini_strcpy(skey, skey + index);
+                     if (index != 0)  //Has preceeding white space
+                        fini_strcpy(skey, skey + index);
 
-                  out << skey;
+                     out << skey;
 
-                  Converters::GetLine(out, key);
+                     Converters::GetLine(out, key);
 
-                  out.clear();
-                  out.str(fini_string_t());
+                     out.clear();
+                     out.str(fini_string_t());
 
-                  out << svalue;
-                  Converters::GetLine(out, value);
+                     out << svalue;
+                     Converters::GetLine(out, value);
 
-                  if (value != value_t())
-                    (*current)[key] = value;
+                     if (value != value_t())
+                       (*current)[key] = value;
+                  }
                }
 
                out.clear();
