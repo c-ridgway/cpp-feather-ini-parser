@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ostream>
 
 #define FINI_SAFE
 #define FINI_BUFFER_SIZE 256
@@ -178,6 +179,31 @@ public:
       return true;
    }
 
+///Debug
+   friend std::ostream& operator<<(std::ostream& os, const ini_t& ini)
+   {
+#ifdef FINI_CPP11
+      for(auto i = ini.sections.begin(); i != ini.sections.end(); i++) //typename ini_t::sectionsit_t
+      {
+         //Section name as ini_t::section_t
+         os << '[' << i->first << ']' << std::endl;
+
+         if (i->second->size() == 0)  //No keys/values in section, skip to next
+            continue;
+
+         for(typename ini_t::keysit_t j = i->second->begin(); j != i->second->end(); j++)
+         {
+            //Name as ini_t::key_t & Value as ini_t::key_t
+            os << "  " << j->first << "=" << j->second << std::endl;
+         }
+      }
+#else
+      std::cout << "Error: FINI requires CPP11 when outputting to stream." << std::endl;
+#endif
+
+      return os;
+   }
+      
 ///Set
    //Assign a value for key under the selected section
    bool set(const key_t key, const value_t value)
