@@ -1,5 +1,5 @@
 /*
-   Feather INI Parser - 1.40
+   Feather INI Parser - 1.41
    You are free to use this however you wish.
 
    If you find a bug, please attept to debug the cause.
