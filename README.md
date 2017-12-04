@@ -4,16 +4,16 @@ feather-ini-parser
 Intuitive, fast, lightweight, header, portable INI parser for ANSI C++.
 
 ```
-INI<> ini("filename.ini", true);
-ini.get("key", "value", "default");
-ini.set("key", "value");
-ini.save();
+INI<> ini("filename.ini", true); // Open and parse
+ini.get("section", "key", "value", "default"); // Get section -> key -> value, return "default" if not found
+ini.set("section", "key", "value"); // Set section -> key -> value
+ini.save(); // Save over initial file
 
-for(auto i: ini.sections)
+for(auto i: ini.sections) // Loop through all sections
 {
    String section = i.first;
 
-   for(auto j: *i.second)
+   for(auto j: *i.second) // Loop through all key/values
       String key = j.first, value = j.second;
 }
 ```
