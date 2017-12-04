@@ -1,7 +1,7 @@
 feather-ini-parser
 ==================
 
-Simple , fast, lightweight, header, portable INI parser for ANSI C++.
+Intuitive, fast, lightweight, header, portable INI parser for ANSI C++.
 
 ## Methods
 
