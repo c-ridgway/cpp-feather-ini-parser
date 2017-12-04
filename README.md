@@ -5,7 +5,7 @@ Simple like your girlfriend, fast, lightweight, header, portable INI parser for 
 
 Why use feather-ini-parser? It's a fast, intuitive, uses C++, supports native data types, wide char support (enable), converting to data types simply by setting a default value or providing the type as a template parameter.
 
-##Methods
+## Methods
 
 Statement     | Return Type
 ------------- | -------------
@@ -22,7 +22,7 @@ ini.clear()|bool
 ini[section][key]|value_t&
 ini[section]|keys_t&
 
-##Example
+## Example
 ```
 #include <iostream>
 #include "INI.h"
@@ -43,5 +43,5 @@ ini["section2"]["key"] = "value";
 ini.save();
 ```
 
-##More
+## More
 Please see the example .cpp file and Code::Blocks .cbp project for a compilable GCC and VSC++ example. Additionally includes enabling wide char support and iterating through contents.
