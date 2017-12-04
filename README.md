@@ -3,6 +3,21 @@ feather-ini-parser
 
 Intuitive, fast, lightweight, header, portable INI parser for ANSI C++.
 
+```
+INI<> ini("filename.ini", true);
+ini.get("key", "value", "default");
+ini.set("key", "value");
+ini.save();
+
+for(auto i: ini.sections)
+{
+   String section = i.first;
+
+   for(auto j: *i.second)
+      String key = j.first, value = j.second;
+}
+```
+
 ## Methods
 
 Statement     | Return Type
@@ -22,23 +37,43 @@ ini[section]|keys_t&
 
 ## Example
 ```
+// Please view the complete list of examplex in 'example/example.cpp'
+
 #include <iostream>
+#include <String>
 #include "INI.h"
 
 using namespace std;
 ```
 ...
 ```
-typedef INI<> ini_t;
-//or
-//typedef INI<section_t, key_t, value_t> ini_t;
+INI<> ini("filename.ini", true); // Load file and parse
 
-ini_t ini("filename.ini", true);
-ini.create("section1"); //Create and select section1
+ini.create("section1"); //Create a section and select it (into the active context)
 ini.set("key", "value");
-cout << ini.get("keynumeric", -1) << endl;
-ini["section2"]["key"] = "value";
+// Set equivelant
+ini.set("section1", "key", "value");
+// Set equivelant (non-safe, performance)
+ini["section1"]["key"] = "value";
+
+cout << ini.get("keynumeric", "default") << endl;
+// Get equivelant
+cout << ini.get("section1", "keynumeric", "default") << endl;
+
 ini.save();
+
+// Loop through all sections and keys (CPP11)
+for(auto i: ini.sections)
+{
+   String section = i.first;
+   cout << "[" << section << "]" << endl;
+
+   for(auto j: *i.second)
+   {
+      String key = j.first, value = j.second;
+      cout << " " << key << "=" << value << endl;
+   }
+}
 ```
 
 ## More
