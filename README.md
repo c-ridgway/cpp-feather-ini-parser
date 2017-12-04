@@ -44,4 +44,4 @@ ini.save();
 ```
 
 ## More
-Please see the example .cpp file and Code::Blocks .cbp project for a compilable GCC and VSC++ example. Additionally includes enabling wide char support and iterating through contents.
+Please see the example .cpp file and Code::Blocks .cbp project for a compilable GCC and VSC++ example. Further examples include enabling wide char support.
