@@ -1,9 +1,7 @@
 feather-ini-parser
 ==================
 
-Simple like your girlfriend, fast, lightweight, header, portable INI parser for ANSI C++.
-
-Why use feather-ini-parser? It's a fast, intuitive, uses C++, supports native data types, wide char support (enable), converting to data types simply by setting a default value or providing the type as a template parameter.
+Simple , fast, lightweight, header, portable INI parser for ANSI C++.
 
 ## Methods
 
