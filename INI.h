@@ -252,7 +252,7 @@ public:
 
    template <typename W, typename X>
       fini_string_t get(const W section, const X key, const fini_char_t* def)  //Handle C string default value without casting
-         { return Converters::Convert<fini_string_t>(Converters::Convert<section_t>(section), get(Converters::Convert<key_t>(key), Converters::Convert<value_t>(def))); }
+         { return Converters::Convert<fini_string_t>(get(Converters::Convert<section_t>(section), Converters::Convert<key_t>(key), Converters::Convert<value_t>(def))); }
 
 ///Functions
    void parse(std::istream& file)
