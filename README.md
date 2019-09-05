@@ -13,7 +13,10 @@ Intuitive, fast, lightweight, header, portable INI parser for ANSI C++.
 //#define FINI_WIDE_SUPPORT
 ...
 
-INI ini("file.ini", true, INI::PARSE_COMMENTS_ALL | INI::PARSE_COMMENTS_SLASH | INI::PARSE_COMMENTS_HASH);  // Assign ini file and parse
+INI::PARSE_FLAGS = INI::PARSE_COMMENTS_ALL | INI::PARSE_COMMENTS_SLASH | INI::PARSE_COMMENTS_HASH;
+INI::SAVE_FLAGS = INI::SAVE_PRUNE | INI::SAVE_PADDING_SECTIONS | INI::SAVE_SPACE_SECTIONS | INI::SAVE_SPACE_KEYS | INI::SAVE_TAB_KEYS | INI::SAVE_SEMICOLON_KEYS;
+
+INI ini("file.ini", true);  // Assign ini file and parse
 //ini.parse(PARSE_COMMENTS_ALL | PARSE_COMMENTS_SLASH | PARSE_COMMENTS_HASH);
 
 ini.create("Section 0");
@@ -24,8 +27,10 @@ ini.get("Key1", "DefaultValue");
 ini.set("Section 0", "Key1", std::to_string(11.12));
 cout << ini.getAs<float>("Section 2", "Key1") << endl; // Return as float
 
+ini["Section 0"]["Key1"] = "Changed";
+
 // Save with formatting
-ini.save("test.ini", INI::SAVE_PRUNE | INI::SAVE_PADDING_SECTIONS | INI::SAVE_SPACE_SECTIONS | INI::SAVE_SPACE_KEYS | INI::SAVE_TAB_KEYS | INI::SAVE_SEMICOLON_KEYS);
+ini.save("test.ini");
 
 // Loop through sections, keys and values
 for(auto i: ini.sections) {
@@ -33,7 +38,7 @@ for(auto i: ini.sections) {
 
    //for(auto j = i.second->begin(); j != i.second->end(); j++)
    for(auto j: *i.second) {
-      cout << " " << j.first << "=" << j.second << endl;
+      cout << "  " << j.first << "=" << j.second << endl;
    }
 }
 ```
@@ -66,7 +71,7 @@ ini.create(section)|bool
 ini.select(section)|bool
 ini.set(key, value)|bool
 ini.get(key, def)|string
-ini.getAs\<type\>(key, def = type())|string
+ini.getAs\<type\>(key, def = type())|type
 ini.clear()|bool
 ini[section][key]|string&
 ini[section]|keys_t&

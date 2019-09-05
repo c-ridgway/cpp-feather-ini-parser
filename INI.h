@@ -77,6 +77,8 @@ class INI
 {
 public:
 /// Define
+  static int PARSE_FLAGS, SAVE_FLAGS;
+
   typedef fini_char_t data_t;
 
   typedef typename std::map<fini_string_t, fini_string_t> keys_t;
@@ -147,6 +149,8 @@ void INI::clear() {
 }
 
 bool INI::parse(int parseFlags) {
+  parseFlags = (parseFlags > 0)? parseFlags: PARSE_FLAGS;
+
   switch(source)
   {
     case SOURCE_FILE: {
@@ -169,6 +173,8 @@ bool INI::parse(int parseFlags) {
 
   return true;
 }
+
+int INI::PARSE_FLAGS = 0, INI::SAVE_FLAGS = 0;
 
 void INI::_parseFile(fini_ifstream_t& file, int parseFlags) {
   fini_string_t line;
@@ -219,6 +225,8 @@ void INI::_parseFile(fini_ifstream_t& file, int parseFlags) {
 }
 
 bool INI::save(fini_string_t filename, int saveFlags) {
+  saveFlags = (saveFlags > 0)? saveFlags: SAVE_FLAGS;
+
   fini_ofstream_t file((filename == "")? this->filename: filename, std::ios::trunc);
   if (!file.is_open())
      return false;

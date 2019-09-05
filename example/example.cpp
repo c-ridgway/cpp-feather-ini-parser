@@ -12,7 +12,10 @@ std::string getStringFromFile(const std::string& path); //Source for data loadin
 
 int main()
 {
-   INI ini2("file.ini", true, INI::PARSE_COMMENTS_ALL | INI::PARSE_COMMENTS_SLASH | INI::PARSE_COMMENTS_HASH);  // Assign ini file and parse
+   INI::PARSE_FLAGS = INI::PARSE_COMMENTS_ALL | INI::PARSE_COMMENTS_SLASH | INI::PARSE_COMMENTS_HASH;
+   INI::SAVE_FLAGS = INI::SAVE_PRUNE | INI::SAVE_PADDING_SECTIONS | INI::SAVE_SPACE_SECTIONS | INI::SAVE_SPACE_KEYS | INI::SAVE_TAB_KEYS | INI::SAVE_SEMICOLON_KEYS;
+
+   INI ini2("file.ini", true);  // Assign ini file and parse
    INI ini(ini2); // Clone
    //ini.parse(PARSE_COMMENTS_ALL | PARSE_COMMENTS_SLASH | PARSE_COMMENTS_HASH);
 
@@ -28,8 +31,10 @@ int main()
    ini.set("Section 0", "Key1", std::to_string(11.12));
    cout << ini.getAs<float>("Section 2", "Key1") << endl;
 
+   ini["Section 0"]["Key1"] = "Changed";
+
    // Save with formatting
-   ini.save("test.ini", INI::SAVE_PRUNE | INI::SAVE_PADDING_SECTIONS | INI::SAVE_SPACE_SECTIONS | INI::SAVE_SPACE_KEYS | INI::SAVE_TAB_KEYS | INI::SAVE_SEMICOLON_KEYS);
+   ini.save("test.ini");
 
    ///Iterate through sections and keys for both C++11 and C++98
    centerString("########## Iterate Contents ##########");
@@ -40,7 +45,7 @@ int main()
 
       //for(auto j = i.second->begin(); j != i.second->end(); j++)
       for(auto j: *i.second) {
-         cout << " " << j.first << "=" << j.second << endl;
+         cout << "  " << j.first << "=" << j.second << endl;
       }
    }
 
