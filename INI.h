@@ -89,27 +89,28 @@ public:
   enum parse_e {PARSE_COMMENTS_SLASH = 1 << 0, PARSE_COMMENTS_HASH = 1 << 1, PARSE_COMMENTS_ALL = 1 << 2};
 
 /// Data
-   fini_string_t filename;
+   const source_e source;
+   const fini_string_t filename;
    //data_t* data;
    //size_t dataSize;
 
    keys_t* current;
    sections_t sections;
-   source_e source;
 
 /// Methods
+  INI(const INI& from);
   INI(fini_string_t filename, bool doParse, int parseFlags = 0);
   //INI(void* data, size_t dataSize, bool doParse)
   ~INI();
   void clear();
   bool parse(int parseFlags = 0);
   void _parseFile(fini_ifstream_t& file, int parseFlags);
-  bool save(const fini_string_t filename, int saveFlags = 0);
+  bool save(fini_string_t filename, int saveFlags = 0);
 
   keys_t& operator[](fini_string_t section);
-  void create(const fini_string_t section);
-  void remove(const fini_string_t section);
-  bool select(const fini_string_t section);
+  void create(fini_string_t section);
+  void remove(fini_string_t section);
+  bool select(fini_string_t section, bool noCreate = false);
   fini_string_t get(fini_string_t section, fini_string_t key, fini_string_t def);
   fini_string_t get(fini_string_t key, fini_string_t def);
     template<class T>
@@ -121,8 +122,16 @@ public:
 };
 
 /// Definition
-INI::INI(fini_string_t filename, bool doParse, int parseFlags): filename(filename) {
-  this->source = SOURCE_FILE;
+INI::INI(const INI& from): source(from.source), filename(from.filename) {
+  // Deep clone INI
+  for(auto i: from.sections) {
+    select(i.first);
+    for(auto j: *i.second)
+      set(j.first, j.second);
+  }
+}
+
+INI::INI(fini_string_t filename, bool doParse, int parseFlags): source(SOURCE_FILE), filename(filename) {
   this->create("");
 
   if (doParse)
@@ -209,7 +218,7 @@ void INI::_parseFile(fini_ifstream_t& file, int parseFlags) {
   }
 }
 
-bool INI::save(const fini_string_t filename, int saveFlags) {
+bool INI::save(fini_string_t filename, int saveFlags) {
   fini_ofstream_t file((filename == "")? this->filename: filename, std::ios::trunc);
   if (!file.is_open())
      return false;
@@ -261,14 +270,12 @@ bool INI::save(const fini_string_t filename, int saveFlags) {
 
 //Provide bracket access to section contents
 INI::keys_t& INI::operator[](fini_string_t section) {
-  if (!select(section))
-    create(section);
-
+  select(section);
   return *current;
 }
 
 //Create a new section and select it
-void INI::create(const fini_string_t section) {
+void INI::create(fini_string_t section) {
   if (section != "" && sections.find(section) != sections.end()) {
     std::cerr << "Error: cpp-feather-ini-parser: Duplicate section '" << section << "'" << std::endl;
     throw -1;
@@ -279,21 +286,24 @@ void INI::create(const fini_string_t section) {
 }
 
 //Removes a section including all key/value pairs
-void INI::remove(const fini_string_t section) {
-  if (select(section))
+void INI::remove(fini_string_t section) {
+  if (select(section, true))
     sections.erase(section);
 
   current = NULL;
 }
 
 //Select a section for performing operations
-bool INI::select(const fini_string_t section) {
+bool INI::select(fini_string_t section, bool noCreate) {
   sections_t::iterator sectionsit = sections.find(section);
-  if (sectionsit == sections.end())
+  if (sectionsit == sections.end()) {
+     if (!noCreate)
+       create(section);
+
      return false;
+  }
 
   current = sectionsit->second;
-
   return true;
 }
 

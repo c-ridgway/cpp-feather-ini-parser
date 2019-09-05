@@ -1,15 +1,19 @@
 
+
 feather-ini-parser
 ==================
 
 Intuitive, fast, lightweight, header, portable INI parser for ANSI C++.
+
+**Requires C++11:**
+-std=c++11 **or** -std=c++14 **or** -std=c++20 **or** ...
 
 ```js
 #include "INI.h"
 //#define FINI_WIDE_SUPPORT
 ...
 
-INI ini("file.ini", true, INI::PARSE_COMMENTS_ALL | INI::PARSE_COMMENTS_SLASH | INI::PARSE_COMMENTS_HASH);  // Assign ini file and parse// Assign ini file and parse
+INI ini("file.ini", true, INI::PARSE_COMMENTS_ALL | INI::PARSE_COMMENTS_SLASH | INI::PARSE_COMMENTS_HASH);  // Assign ini file and parse
 //ini.parse(PARSE_COMMENTS_ALL | PARSE_COMMENTS_SLASH | PARSE_COMMENTS_HASH);
 
 ini.create("Section 0");
@@ -24,13 +28,11 @@ cout << ini.getAs<float>("Section 2", "Key1") << endl; // Return as float
 ini.save("test.ini", INI::SAVE_PRUNE | INI::SAVE_PADDING_SECTIONS | INI::SAVE_SPACE_SECTIONS | INI::SAVE_SPACE_KEYS | INI::SAVE_TAB_KEYS | INI::SAVE_SEMICOLON_KEYS);
 
 // Loop through sections, keys and values
-for(auto i: ini.sections)
-{
+for(auto i: ini.sections) {
    cout << "[" << i.first << "]" << endl;
 
    //for(auto j = i.second->begin(); j != i.second->end(); j++)
-   for(auto j: *i.second)
-   {
+   for(auto j: *i.second) {
       cout << " " << j.first << "=" << j.second << endl;
    }
 }
@@ -54,6 +56,7 @@ SAVE_SEMICOLON_KEYS| 'key = value;' instead of 'key = value'
 Statement     | Return Type
 ------------- | -------------
 **ini**(filename, doParse, parseFlags)|constructor
+**ini**(ini)|copy constructor
 **ini.parse**(parseFlags)|bool
 **ini.save**(filename, saveFlags)|bool
 **ini.set**(section, key, value)|bool

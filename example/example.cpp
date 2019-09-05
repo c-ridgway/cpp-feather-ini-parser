@@ -12,7 +12,8 @@ std::string getStringFromFile(const std::string& path); //Source for data loadin
 
 int main()
 {
-   INI ini("file.ini", true, INI::PARSE_COMMENTS_ALL | INI::PARSE_COMMENTS_SLASH | INI::PARSE_COMMENTS_HASH);  // Assign ini file and parse
+   INI ini2("file.ini", true, INI::PARSE_COMMENTS_ALL | INI::PARSE_COMMENTS_SLASH | INI::PARSE_COMMENTS_HASH);  // Assign ini file and parse
+   INI ini(ini2); // Clone
    //ini.parse(PARSE_COMMENTS_ALL | PARSE_COMMENTS_SLASH | PARSE_COMMENTS_HASH);
 
    ///Manipulate and access contents
@@ -34,13 +35,11 @@ int main()
    centerString("########## Iterate Contents ##########");
 
    // Loop through sections, keys and values
-   for(auto i: ini.sections)
-   {
+   for(auto i: ini.sections) {
       cout << "[" << i.first << "]" << endl;
 
       //for(auto j = i.second->begin(); j != i.second->end(); j++)
-      for(auto j: *i.second)
-      {
+      for(auto j: *i.second) {
          cout << " " << j.first << "=" << j.second << endl;
       }
    }
