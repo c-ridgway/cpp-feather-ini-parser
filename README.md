@@ -61,7 +61,7 @@ Statement     | Return Type
 **ini.save**(filename, saveFlags)|bool
 **ini.set**(section, key, value)|bool
 **ini.get**(section, key, def)|string
-**ini.getAs**\<type\>(section, key, def = type())|string
+**ini.getAs**\<type\>(section, key, def = type())|type
 ini.create(section)|bool
 ini.select(section)|bool
 ini.set(key, value)|bool
