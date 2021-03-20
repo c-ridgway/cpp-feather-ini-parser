@@ -5,6 +5,40 @@ feather-ini-parser
 
 Intuitive, fast, lightweight, header, portable INI parser for ANSI C++.
 
+## Methods
+
+Statement     | Return Type
+------------- | -------------
+**ini**(filename, doParse, parseFlags)|constructor
+**ini**(ini)|copy constructor
+**ini.parse**(parseFlags)|bool
+**ini.save**(filename, saveFlags)|bool
+**ini.set**(section, key, value)|bool
+**ini.get**(section, key, def)|string
+**ini.getAs**\<type\>(section, key, def = type())|type
+ini.create(section)|bool
+ini.select(section)|bool
+ini.set(key, value)|bool
+ini.get(key, def)|string
+ini.getAs\<type\>(key, def = type())|type
+ini.clear()|bool
+ini[section][key]|string&
+ini[section]|keys_t&
+
+## Flags
+
+Flag     | Effect
+------------- | -------------
+PARSE_COMMENTS_ALL| Parses comments // and #
+PARSE_COMMENTS_SLASH| Parses comment //
+PARSE_COMMENTS_HASH| Parses comment #
+SAVE_PRUNE| Removes all empty sections/keys
+SAVE_PADDING_SECTIONS| Appends a blank line under each section
+SAVE_SPACE_SECTIONS| '[ Section ]' instead of '[Section]'
+SAVE_SPACE_KEYS| 'key = value' instead of 'key=value'
+SAVE_TAB_KEYS| '__key = value' instead of 'key = value'
+SAVE_SEMICOLON_KEYS| 'key = value;' instead of 'key = value'
+
 **Requires C++11:**
 -std=c++11 **or** -std=c++14 **or** -std=c++20 **or** ...
 
@@ -42,39 +76,6 @@ for(auto i: ini.sections) {
    }
 }
 ```
-## Flags
-
-Flag     | Effect
-------------- | -------------
-PARSE_COMMENTS_ALL| Parses comments // and #
-PARSE_COMMENTS_SLASH| Parses comment //
-PARSE_COMMENTS_HASH| Parses comment #
-SAVE_PRUNE| Removes all empty sections/keys
-SAVE_PADDING_SECTIONS| Appends a blank line under each section
-SAVE_SPACE_SECTIONS| '[ Section ]' instead of '[Section]'
-SAVE_SPACE_KEYS| 'key = value' instead of 'key=value'
-SAVE_TAB_KEYS| '__key = value' instead of 'key = value'
-SAVE_SEMICOLON_KEYS| 'key = value;' instead of 'key = value'
-
-## Methods
-
-Statement     | Return Type
-------------- | -------------
-**ini**(filename, doParse, parseFlags)|constructor
-**ini**(ini)|copy constructor
-**ini.parse**(parseFlags)|bool
-**ini.save**(filename, saveFlags)|bool
-**ini.set**(section, key, value)|bool
-**ini.get**(section, key, def)|string
-**ini.getAs**\<type\>(section, key, def = type())|type
-ini.create(section)|bool
-ini.select(section)|bool
-ini.set(key, value)|bool
-ini.get(key, def)|string
-ini.getAs\<type\>(key, def = type())|type
-ini.clear()|bool
-ini[section][key]|string&
-ini[section]|keys_t&
 
 ## More
 Please see the example .cpp file and Code::Blocks .cbp project for a compilable GCC and VSC++ example. Further examples include enabling wide char support.
