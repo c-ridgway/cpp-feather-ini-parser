@@ -36,8 +36,8 @@ SAVE_PRUNE| Removes all empty sections/keys
 SAVE_PADDING_SECTIONS| Appends a blank line under each section
 SAVE_SPACE_SECTIONS| '[ Section ]' instead of '[Section]'
 SAVE_SPACE_KEYS| 'key = value' instead of 'key=value'
-SAVE_TAB_KEYS| '  key = value' instead of 'key = value'
-SAVE_SEMICOLON_KEYS| 'key = value;' instead of 'key = value'
+SAVE_TAB_KEYS| '    key=value' instead of 'key=value'
+SAVE_SEMICOLON_KEYS| 'key=value;' instead of 'key=value'
 
 ## Example
 
