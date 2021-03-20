@@ -39,6 +39,8 @@ SAVE_SPACE_KEYS| 'key = value' instead of 'key=value'
 SAVE_TAB_KEYS| '__key = value' instead of 'key = value'
 SAVE_SEMICOLON_KEYS| 'key = value;' instead of 'key = value'
 
+## Example
+
 **Requires C++11:**
 -std=c++11 **or** -std=c++14 **or** -std=c++20 **or** ...
 
