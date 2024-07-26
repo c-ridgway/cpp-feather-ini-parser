@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include <map>
 #include <vector>
 
@@ -42,20 +43,20 @@
 #endif
 
 
-fini_string_t& l_trim(fini_string_t& str, const fini_string_t trim_chars = "\t\v\f; ") {
+static inline fini_string_t& l_trim(fini_string_t& str, const fini_string_t trim_chars = "\t\v\f; ") {
   str.erase(0, str.find_first_not_of(trim_chars)); return str;
 }
 
-fini_string_t& r_trim(fini_string_t& str, const fini_string_t trim_chars = "\t\v\f; ") {
+static inline fini_string_t& r_trim(fini_string_t& str, const fini_string_t trim_chars = "\t\v\f; ") {
   str.erase(str.find_last_not_of(trim_chars) + 1); return str;
 }
 
-fini_string_t& trim(fini_string_t& str, const fini_string_t trim_chars = "\t\v\f; ") {
+static inline fini_string_t& trim(fini_string_t& str, const fini_string_t trim_chars = "\t\v\f; ") {
   return l_trim(r_trim(str, trim_chars), trim_chars);
 }
 
 template <typename T>
-T convert_to (const fini_string_t &str) {
+inline T convert_to (const fini_string_t &str) {
   fini_sstream_t ss(str);
   T num;
   ss >> num;
@@ -63,22 +64,22 @@ T convert_to (const fini_string_t &str) {
 }
 
 template <>
-fini_string_t convert_to<fini_string_t>(const fini_string_t &str) {
+inline fini_string_t convert_to<fini_string_t>(const fini_string_t &str) {
   return str;
 }
 
 template <>
-const char* convert_to<const char*>(const fini_string_t &str) {
+inline const char* convert_to<const char*>(const fini_string_t &str) {
   return str.c_str();
 }
+
+static int INI_DEFAULT_PARSE_FLAGS = 0, INI_DEFAULT_SAVE_FLAGS = 0;
 
 ///
 class INI
 {
 public:
 /// Define
-  static int PARSE_FLAGS, SAVE_FLAGS;
-
   typedef fini_char_t data_t;
 
   typedef typename std::map<fini_string_t, fini_string_t> keys_t;
@@ -124,7 +125,7 @@ public:
 };
 
 /// Definition
-INI::INI(const INI& from): source(from.source), filename(from.filename) {
+inline INI::INI(const INI& from): source(from.source), filename(from.filename) {
   // Deep clone INI
   for(auto i: from.sections) {
     select(i.first);
@@ -133,23 +134,23 @@ INI::INI(const INI& from): source(from.source), filename(from.filename) {
   }
 }
 
-INI::INI(fini_string_t filename, bool doParse, int parseFlags): source(SOURCE_FILE), filename(filename) {
+inline INI::INI(fini_string_t filename, bool doParse, int parseFlags): source(SOURCE_FILE), filename(filename) {
   this->create("");
 
   if (doParse)
      parse(parseFlags);
 }
 
-INI:: ~INI() {
+inline INI:: ~INI() {
   clear();
 }
 
-void INI::clear() {
+inline void INI::clear() {
   sections.clear();
 }
 
-bool INI::parse(int parseFlags) {
-  parseFlags = (parseFlags > 0)? parseFlags: PARSE_FLAGS;
+inline bool INI::parse(int parseFlags) {
+  parseFlags = (parseFlags > 0)? parseFlags: INI_DEFAULT_PARSE_FLAGS;
 
   switch(source)
   {
@@ -174,9 +175,7 @@ bool INI::parse(int parseFlags) {
   return true;
 }
 
-int INI::PARSE_FLAGS = 0, INI::SAVE_FLAGS = 0;
-
-void INI::_parseFile(fini_ifstream_t& file, int parseFlags) {
+inline void INI::_parseFile(fini_ifstream_t& file, int parseFlags) {
   fini_string_t line;
   fini_string_t section; // Set default section (support for sectionless files)
   size_t i = 0;
@@ -224,8 +223,8 @@ void INI::_parseFile(fini_ifstream_t& file, int parseFlags) {
   }
 }
 
-bool INI::save(fini_string_t filename, int saveFlags) {
-  saveFlags = (saveFlags > 0)? saveFlags: SAVE_FLAGS;
+inline bool INI::save(fini_string_t filename, int saveFlags) {
+  saveFlags = (saveFlags > 0)? saveFlags: INI_DEFAULT_SAVE_FLAGS;
 
   fini_ofstream_t file((filename == "")? this->filename: filename, std::ios::trunc);
   if (!file.is_open())
@@ -277,13 +276,13 @@ bool INI::save(fini_string_t filename, int saveFlags) {
 }
 
 //Provide bracket access to section contents
-INI::keys_t& INI::operator[](fini_string_t section) {
+inline INI::keys_t& INI::operator[](fini_string_t section) {
   select(section);
   return *current;
 }
 
 //Create a new section and select it
-void INI::create(fini_string_t section) {
+inline void INI::create(fini_string_t section) {
   if (section != "" && sections.find(section) != sections.end()) {
     std::cerr << "Error: cpp-feather-ini-parser: Duplicate section '" << section << "'" << std::endl;
     throw -1;
@@ -294,7 +293,7 @@ void INI::create(fini_string_t section) {
 }
 
 //Removes a section including all key/value pairs
-void INI::remove(fini_string_t section) {
+inline void INI::remove(fini_string_t section) {
   if (select(section, true))
     sections.erase(section);
 
@@ -302,7 +301,7 @@ void INI::remove(fini_string_t section) {
 }
 
 //Select a section for performing operations
-bool INI::select(fini_string_t section, bool noCreate) {
+inline bool INI::select(fini_string_t section, bool noCreate) {
   sections_t::iterator sectionsit = sections.find(section);
   if (sectionsit == sections.end()) {
      if (!noCreate)
@@ -315,11 +314,11 @@ bool INI::select(fini_string_t section, bool noCreate) {
   return true;
 }
 
-fini_string_t INI::get(fini_string_t section, fini_string_t key, fini_string_t def) {
+inline fini_string_t INI::get(fini_string_t section, fini_string_t key, fini_string_t def) {
   return get(key, def);
 }
 
-fini_string_t INI::get(fini_string_t key, fini_string_t def) {
+inline fini_string_t INI::get(fini_string_t key, fini_string_t def) {
   auto it = current->find(key);
   if (it == current->end())
      return def;
@@ -328,12 +327,12 @@ fini_string_t INI::get(fini_string_t key, fini_string_t def) {
 }
 
   template<class T>
-T INI::getAs(fini_string_t section, fini_string_t key, T def) {
+inline T INI::getAs(fini_string_t section, fini_string_t key, T def) {
   return getAs<T>(key, def);
 }
 
   template<class T>
-T INI::getAs(fini_string_t key, T def) {
+inline T INI::getAs(fini_string_t key, T def) {
   auto it = current->find(key);
   if (it == current->end())
      return def;
@@ -341,13 +340,13 @@ T INI::getAs(fini_string_t key, T def) {
   return convert_to<T>(it->second);
 }
 
-void INI::set(fini_string_t section, fini_string_t key, fini_string_t value) {
+inline void INI::set(fini_string_t section, fini_string_t key, fini_string_t value) {
   if (!select(section))
     create(section);
 
   set(key, value);
 }
 
-void INI::set(fini_string_t key, fini_string_t value) {
+inline void INI::set(fini_string_t key, fini_string_t value) {
   (*current)[key] = value;
 }
